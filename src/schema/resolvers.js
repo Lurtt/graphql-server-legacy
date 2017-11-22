@@ -1,16 +1,3 @@
-const links = [
-  {
-    id: 1,
-    url: 'http://graphql.org',
-    description: 'The Best Query Language'
-  },
-  {
-    id: 2,
-    url: 'http://dev.apollodata.com',
-    description: 'Awesome GraphQL Client'
-  }
-]
-
 export default {
   Query: {
     allLinks: async (root, data, { mongo: { Links } }) => await Links.find({}).toArray()
@@ -19,7 +6,17 @@ export default {
   Mutation: {
     createLink: async (root, data, { mongo: { Links } }) => {
       const response = await Links.insert(data)
-      return Object.assign({id: response.insertedIds[0]}, data)
+      return Object.assign({ id: response.insertedIds[0] }, data)
+    },
+
+    createUser: async (root, data, { mongo: { Users } }) => {
+      const newUser = {
+        name: data.name,
+        email: data.authProvider.email.email,
+        password: data.authProvider.email.password,
+      }
+      const response = await Users.insert(newUser)
+      return Object.assign({ id: response.insertedIds[0] }, newUser)
     }
   },
 
