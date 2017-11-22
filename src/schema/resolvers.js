@@ -17,7 +17,18 @@ export default {
       }
       const response = await Users.insert(newUser)
       return Object.assign({ id: response.insertedIds[0] }, newUser)
+    },
+
+    signinUser: async (root, data, {mongo: { Users }}) => {
+      const user = await Users.findOne({ email: data.email.email })
+      if (data.email.password === user.password) {
+        return { token: `token-${user.email}`, user }
+      }
     }
+  },
+
+  User: {
+    id: root => root._id || root.id,
   },
 
   Link: {
